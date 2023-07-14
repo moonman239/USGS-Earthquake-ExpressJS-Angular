@@ -15,5 +15,5 @@ export async function getEarthquakes(startDate: Date,endDate: Date)
     if (!response.ok)
         throw new Error("Error " + response.status + ": " + response.statusText);
     const json = await response.json();
-    return json.features;
+    return json["features"];
 }
