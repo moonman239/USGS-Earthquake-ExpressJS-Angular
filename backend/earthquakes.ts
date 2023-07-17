@@ -8,7 +8,8 @@ function radians(degrees: number)
 class Feature
 {
     properties:
-        {place: string, time: number, geometry: Geometry}
+        {place: string, time: number};
+    geometry: Geometry;
 };
 
 function haversine(rad: number)
@@ -39,7 +40,12 @@ export class Earthquake {
         const json = await response.json() as {features: Feature[]};
         if (!json.features)
             throw new Error("invalid json ");
-        return json.features.map((obj)=>new Earthquake(obj.properties.place,obj.properties.time,obj.properties.geometry));
+        return json.features.map((obj)=>{
+            if (!obj.properties)
+                throw new Error("object properties undefined for object " + JSON.stringify(obj));
+            console.debug(obj);
+            return new Earthquake(obj.properties.place,obj.properties.time,obj.geometry);
+        });
     }
     distance(lat1:number,lon1:number): number // lat1 and lon1 should be in degrees
     {
