@@ -54,4 +54,8 @@ export class Earthquake {
         const trig = haversine(this.latitude - lat1) + Math.cos(lat1) * Math.cos(this.latitude) * haversine(this.longitude - lon1);
         return 2 * 6371.008 * Math.asin(Math.sqrt(trig));
     }
+    public static withinRadius(earthquakes:Earthquake[],latitude:number,longitude:number,searchRadius:number)
+    {
+        return earthquakes.filter((eq=>eq.distance(latitude,longitude) <= searchRadius));
+    }
 }
