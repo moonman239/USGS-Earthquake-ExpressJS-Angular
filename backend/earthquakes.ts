@@ -11,15 +11,21 @@ class Feature
         {place: string, time: number, geometry: Geometry}
 };
 
+function haversine(rad: number)
+{
+    return Math.pow(Math.sin(rad/2),2);
+}
 export class Earthquake {
     place:string
     time:number
-    geometry:Geometry
+    latitude:number
+    longitude:number
     constructor(place: string, time: number,geometry:Geometry)
     {
         this.place = place;
         this.time = time;
-        this.geometry = geometry;
+        this.latitude = radians(geometry.coordinates[1]);
+        this.longitude = radians(geometry.coordinates[0]);
     }
     public static async getEarthquakes(startDate: Date,endDate: Date)
     {
@@ -34,6 +40,12 @@ export class Earthquake {
         if (!json.features)
             throw new Error("invalid json ");
         return json.features.map((obj)=>new Earthquake(obj.properties.place,obj.properties.time,obj.properties.geometry));
-        
+    }
+    distance(lat1:number,lon1:number): number // lat1 and lon1 should be in degrees
+    {
+        lat1 = radians(lat1);
+        lon1 = radians(lon1);
+        const trig = haversine(this.latitude - lat1) + Math.cos(lat1) * Math.cos(this.latitude) * haversine(this.longitude - lon1);
+        return 2 * 6371.008 * Math.asin(Math.sqrt(trig));
     }
 }
